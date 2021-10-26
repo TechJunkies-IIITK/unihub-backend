@@ -1,10 +1,15 @@
-class AuthController{
-    static logIn = (req,res)=>{
+const logIn = (socket)=>{
+    socket.on('/login',(data)=>{
         console.log('Log In')
-    }
-    static signUp = (req,res)=>{
-        console.log('Log In')
-    }
+    })
+}
+const signUp = (socket)=>{
+    socket.on('/signup',(data)=>{
+        console.log('Sign Up')
+    })
 }
 
-module.exports = AuthController
+module.exports = {
+    logIn,
+    signUp
+}

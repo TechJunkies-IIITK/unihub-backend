@@ -8,8 +8,10 @@
   },
   "license": "MIT",
   "dependencies": {
+    "agora-access-token": "^2.0.4",
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
+    "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.0.12",
     "socket.io": "^4.3.1"
   },
