@@ -1,10 +1,11 @@
-class AuthController{
-    static logIn = (req,res)=>{
-        console.log('Log In')
-    }
-    static signUp = (req,res)=>{
-        console.log('Log In')
-    }
+const logIn = (req,res)=>{
+    // login code goes here
+}
+const signUp = (req,res)=>{
+    // signup code goes here
 }
 
-module.exports = AuthController
+module.exports = {
+    logIn,
+    signUp
+}
