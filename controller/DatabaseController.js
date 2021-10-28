@@ -16,16 +16,15 @@ async function addUser(name,email,phone,passsword,profileLink){
     },(err,data)=>{
         if(data)added=true
     })
-    return added
+    return added===true
 }
 
-function deleteUser(email,phone){
-    UserSchema.deleteOne({
-        email,
-        phone,
-    },(err)=>{
-        //user not found
-    });
+async function getUserDetailsByEmail(email){
+    return await UserSchema.findOne({email})
+}
+
+async function getUserDetailsByPhone(phone){
+    return await UserSchema.findOne({phone})
 }
 
 function createHub(adminId,hubName,hubTopic,isPublic,hubCode,users){
@@ -41,7 +40,7 @@ function createHub(adminId,hubName,hubTopic,isPublic,hubCode,users){
     },(err,data)=>{
         if(data)created=true
     })
-    return created
+    return created===true
 }
 
 async function addUserToHub(hubID,name,userID){
@@ -53,7 +52,10 @@ async function addUserToHub(hubID,name,userID){
             profileLink
         })
         hub.save()
-    } 
+        return true
+    } else{
+        return false
+    }
 }
 
 async function removeUserFromHub(hubID,userID){
@@ -62,19 +64,26 @@ async function removeUserFromHub(hubID,userID){
         const index = hub.users.findIndex((e)=>e.userID === userID)
         hub.users.spice(index,1)
         hub.save()
-    } 
+        return true
+    } else{
+        return false
+    }
 }
 
 async function getPublicHubs(){
-    return await RoomSchema.find({
+    let hubs = []
+    await RoomSchema.find({
         isPublic:true
+    },(err,data)=>{
+        if(data)hubs = data
     })
+    return hubs
 }
 
 async function getHubDetailsByCode(hubCode){
-    return RoomSchema.findOne({hubCode})
+    return await RoomSchema.findOne({hubCode})
 }
 
 async function getHubDetailsByName(hubName){
-    return RoomSchema.findOne({hubName})
+    return await RoomSchema.findOne({hubName})
 }
