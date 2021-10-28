@@ -102,3 +102,10 @@ function publicHubs(socket) {
         })
     })
 }
+
+module.exports = {
+    publicHubs,
+    join,
+    leave,
+    create
+}

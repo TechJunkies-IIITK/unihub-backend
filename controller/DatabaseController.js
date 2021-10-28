@@ -4,7 +4,7 @@ const { hashSync } = require('bcrypt')
 const { uid } = require('uid/secure')
 const getUid = require('get-uid')
 
-async function addUser(name,email,phone,passsword,profileLink){
+async function addUser(name,email,phone,password,profileLink){
     let added
     await UserSchema.create({
         name,
@@ -28,11 +28,11 @@ async function getUserDetailsByPhone(phone){
 }
 
 async function createHub(adminId,hubName,hubTopic,isPublic,hubCode,users){
-    let created
+    let created = false
     await RoomSchema.create({
         adminId,
         hubName,
-        hubID = uid(12),
+        hubID : uid(12),
         hubTopic,
         hubCode : isPublic ? '' : uid(6),
         isPublic,
@@ -40,7 +40,7 @@ async function createHub(adminId,hubName,hubTopic,isPublic,hubCode,users){
     },(err,data)=>{
         if(data)created=true
     })
-    return created===true
+    return created
 }
 
 async function addUserToHub(hubID,userID){
