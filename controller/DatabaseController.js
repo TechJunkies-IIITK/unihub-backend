@@ -27,7 +27,7 @@ async function getUserDetailsByPhone(phone){
     return await UserSchema.findOne({phone})
 }
 
-function createHub(adminId,hubName,hubTopic,isPublic,hubCode,users){
+async function createHub(adminId,hubName,hubTopic,isPublic,hubCode,users){
     let created
     await RoomSchema.create({
         adminId,
@@ -43,13 +43,14 @@ function createHub(adminId,hubName,hubTopic,isPublic,hubCode,users){
     return created===true
 }
 
-async function addUserToHub(hubID,name,userID){
+async function addUserToHub(hubID,userID){
     const hub = await RoomSchema.findOne({hubID})
-    if(hub!=null){
+    const user = await UserSchema.findOne({userID})
+    if(hub && user){
         hub.users.push({
-            name,
+            name: user.name,
             userID,
-            profileLink
+            profileLink: user.profileLink
         })
         hub.save()
         return true
@@ -86,4 +87,16 @@ async function getHubDetailsByCode(hubCode){
 
 async function getHubDetailsByName(hubName){
     return await RoomSchema.findOne({hubName})
+}
+
+module.exports = {
+    addUser,
+    getUserDetailsByEmail,
+    getUserDetailsByPhone,
+    createHub,
+    addUserToHub,
+    removeUserFromHub,
+    getHubDetailsByCode,
+    getHubDetailsByName,
+    getPublicHubs
 }
