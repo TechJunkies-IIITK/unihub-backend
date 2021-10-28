@@ -43,13 +43,14 @@ async function createHub(adminId,hubName,hubTopic,isPublic,hubCode,users){
     return created===true
 }
 
-async function addUserToHub(hubID,name,userID){
+async function addUserToHub(hubID,userID){
     const hub = await RoomSchema.findOne({hubID})
-    if(hub!=null){
+    const user = await UserSchema.findOne({userID})
+    if(hub && user){
         hub.users.push({
-            name,
+            name: user.name,
             userID,
-            profileLink
+            profileLink: user.profileLink
         })
         hub.save()
         return true
