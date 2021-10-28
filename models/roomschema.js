@@ -1,13 +1,13 @@
 const {Schema , model} = require('mongoose')
 
 const HubSchema = new Schema({
-    adminId : Number,
+    adminId : {type: Number, unique:true},
     hubName : String,
-    hubID : String,
+    hubID : {type: String, unique:true},
     hubTopic : String,
     hubCode: {
         type: String,
-        default: ''
+        default: '',
     },
     isPublic : Boolean,
     users : []

@@ -1,12 +1,8 @@
-const logIn = (socket)=>{
-    socket.on('/login',(data)=>{
-        console.log('Log In')
-    })
+const logIn = (req,res)=>{
+    // login code goes here
 }
-const signUp = (socket)=>{
-    socket.on('/signup',(data)=>{
-        console.log('Sign Up')
-    })
+const signUp = (req,res)=>{
+    // signup code goes here
 }
 
 module.exports = {

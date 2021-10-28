@@ -1,18 +1,25 @@
 const { PORT } = require('./config/config')
+const express = require('express')
+const app = express()
 const { logIn, signUp } = require('./controller/AuthController')
-const io = require('socket.io')
-const server = io.listen(PORT)
+const server = require('http').createServer(app)
+const { Server } = require('socket.io')
+const io = new Server(server)
 
-server.use((e,next)=>{
+/*io.use((e,next)=>{
     // e[0] = path
     // e[1] = data
     if(e[0] === '/login' || e[0] === '/signup')
         return next()
     // verification for other paths
-})
+})*/
 
-server.on('connection',(socket)=>{
+io.on('connection',(socket)=>{
     console.log('a user connected')
-    logIn(socket)
-    signUp(socket)
 });
+
+app.post('/login',logIn)
+
+app.post('/signup',signUp)
+
+app.listen(PORT,()=>console.log(`Server running at port ${PORT}`))
