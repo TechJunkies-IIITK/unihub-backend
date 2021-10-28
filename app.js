@@ -1,18 +1,32 @@
-const { PORT } = require('./config/config')
+const { PORT, DATABASE_URL } = require('./config/config')
 const express = require('express')
 const app = express()
 const { logIn, signUp } = require('./controller/AuthController')
+const { verifyToken } = require('./controller/JwtController') 
 const server = require('http').createServer(app)
 const { Server } = require('socket.io')
 const io = new Server(server)
+const mongoose = require('mongoose')
 
-/*io.use((e,next)=>{
-    // e[0] = path
-    // e[1] = data
-    if(e[0] === '/login' || e[0] === '/signup')
-        return next()
-    // verification for other paths
-})*/
+mongoose.connect(DATABASE_URL,{
+    useNewUrlParser:true,
+    useCreateIndex:true,
+    useUnifiedTopology:true
+})
+
+mongoose.on('connection',()=>console.log('database connected'))
+
+mongoose.on('disconnected',()=>console.log('database disconnected'))
+
+io.use((socket,next)=>{
+    const token = socket.handshake.auth.token;
+    const uid = socket.handshake.auth.uid;
+    if(verifyToken(token,uid)){
+        next()
+    }else{
+        socket.disconnect()
+    }
+})
 
 io.on('connection',(socket)=>{
     console.log('a user connected')

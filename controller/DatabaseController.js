@@ -27,7 +27,7 @@ async function getUserDetailsByPhone(phone){
     return await UserSchema.findOne({phone})
 }
 
-function createHub(adminId,hubName,hubTopic,isPublic,hubCode,users){
+async function createHub(adminId,hubName,hubTopic,isPublic,hubCode,users){
     let created
     await RoomSchema.create({
         adminId,
@@ -86,4 +86,16 @@ async function getHubDetailsByCode(hubCode){
 
 async function getHubDetailsByName(hubName){
     return await RoomSchema.findOne({hubName})
+}
+
+module.exports = {
+    addUser,
+    getUserDetailsByEmail,
+    getUserDetailsByPhone,
+    createHub,
+    addUserToHub,
+    removeUserFromHub,
+    getHubDetailsByCode,
+    getHubDetailsByName,
+    getPublicHubs
 }
