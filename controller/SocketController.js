@@ -73,7 +73,7 @@ function leave(socket) {
                 }
             }
         }
-        socket.emit('join-res',{message:'failure'})
+        socket.emit('leave-res',{message:'failure'})
     })
 }
 
@@ -82,15 +82,13 @@ function create(socket) {
         const { hubName, hubCode, isPublic, hubTopic } = data
         const uid = socket.handshake.auth.userID
         if(hubName && (isPublic ? true: hubCode.length == 6) ){
-            const created = await createHub(uid,hubName,hubTopic,
+            createHub(uid,hubName,hubTopic,
                 isPublic,hubCode,[])
-            if(created){
                 const hub = await getHubDetailsByName(hubName)
                 await addUserToHub(hub.hubID,uid)
-                return socket.emit('leave-res',{message:'success'})
-            }
+                return socket.emit('create-res',{message:'success'})
         }
-        socket.emit('join-res',{message:'failure'})
+        socket.emit('create-res',{message:'failure'})
     })
 }
 
