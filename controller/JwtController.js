@@ -20,8 +20,8 @@ function verifyToken(token,userID){
     return verified
 }
 
-function createAgoraToken(channelName,userID) {
-    return RtcTokenBuilder.buildTokenWithUid(APP_ID,APP_CERTIFICATE,channelName,
+function createAgoraToken(hubID,userID) {
+    return RtcTokenBuilder.buildTokenWithUid(APP_ID,APP_CERTIFICATE,hubID,
         userID,role,privilegeExpiredTs)
 }
 

@@ -16,7 +16,7 @@ function join(socket) {
             if(hubName){
                 const hub = await getHubDetailsByName(hubName)
                 if(hub){
-                    const token = createAgoraToken(hubName, uid)
+                    const token = createAgoraToken(hub.hubID, uid)
                     socket.emit('join-res',{
                         message: 'success',
                         token,
@@ -38,7 +38,7 @@ function join(socket) {
             if(hubCode ){
                 const hub = await getHubDetailsByCode(hubCode)
                 if(hub){
-                    const token = createAgoraToken(hub.hubName, uid)
+                    const token = createAgoraToken(hub.hubID, uid)
                     socket.emit('join-res',{
                         message: 'success',
                         token,
@@ -86,7 +86,11 @@ function create(socket) {
                 isPublic,hubCode,[])
                 const hub = await getHubDetailsByName(hubName)
                 await addUserToHub(hub.hubID,uid)
-                return socket.emit('create-res',{message:'success'})
+                return socket.emit('create-res',{
+                    message:'success',
+                    hubID:hub.hubID,
+                    token:createAgoraToken(hub.hubID, uid)
+                })
         }
         socket.emit('create-res',{message:'failure'})
     })
