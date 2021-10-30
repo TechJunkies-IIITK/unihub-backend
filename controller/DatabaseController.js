@@ -1,10 +1,10 @@
 const UserSchema = require('../models/userdetails')
-const RoomSchema = require('../models/roomschema')
+const HubSchema = require('../models/hubschema')
 const { hashSync } = require('bcrypt')
 const { uid } = require('uid/secure')
 const getUid = require('get-uid')
 
-async function addUser(name,email,phone,passsword,profileLink){
+async function addUser(name,email,phone,password,profileLink){
     let added
     await UserSchema.create({
         name,
@@ -27,24 +27,21 @@ async function getUserDetailsByPhone(phone){
     return await UserSchema.findOne({phone})
 }
 
-async function createHub(adminId,hubName,hubTopic,isPublic,hubCode,users){
-    let created
-    await RoomSchema.create({
+function createHub(adminId,hubName,hubTopic,isPublic,hubCode,users){
+    HubSchema.create({
         adminId,
         hubName,
-        hubID = uid(12),
+        hubID : uid(12),
         hubTopic,
         hubCode : isPublic ? '' : uid(6),
         isPublic,
         users
     },(err,data)=>{
-        if(data)created=true
     })
-    return created===true
 }
 
 async function addUserToHub(hubID,userID){
-    const hub = await RoomSchema.findOne({hubID})
+    const hub = await HubSchema.findOne({hubID})
     const user = await UserSchema.findOne({userID})
     if(hub && user){
         hub.users.push({
@@ -60,7 +57,7 @@ async function addUserToHub(hubID,userID){
 }
 
 async function removeUserFromHub(hubID,userID){
-    const hub = await RoomSchema.findOne({hubID})
+    const hub = await HubSchema.findOne({hubID})
     if(hub!=null){
         const index = hub.users.findIndex((e)=>e.userID === userID)
         hub.users.spice(index,1)
@@ -72,21 +69,17 @@ async function removeUserFromHub(hubID,userID){
 }
 
 async function getPublicHubs(){
-    let hubs = []
-    await RoomSchema.find({
+    return await HubSchema.find({
         isPublic:true
-    },(err,data)=>{
-        if(data)hubs = data
-    })
-    return hubs
+    }).select('-_id -__v')
 }
 
 async function getHubDetailsByCode(hubCode){
-    return await RoomSchema.findOne({hubCode})
+    return await HubSchema.findOne({hubCode})
 }
 
 async function getHubDetailsByName(hubName){
-    return await RoomSchema.findOne({hubName})
+    return await HubSchema.findOne({hubName})
 }
 
 module.exports = {

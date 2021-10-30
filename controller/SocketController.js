@@ -16,7 +16,7 @@ function join(socket) {
             if(hubName){
                 const hub = await getHubDetailsByName(hubName)
                 if(hub){
-                    const token = createAgoraToken(hubName, uid)
+                    const token = createAgoraToken(hub.hubID, uid)
                     socket.emit('join-res',{
                         message: 'success',
                         token,
@@ -38,7 +38,7 @@ function join(socket) {
             if(hubCode ){
                 const hub = await getHubDetailsByCode(hubCode)
                 if(hub){
-                    const token = createAgoraToken(hub.hubName, uid)
+                    const token = createAgoraToken(hub.hubID, uid)
                     socket.emit('join-res',{
                         message: 'success',
                         token,
@@ -73,7 +73,7 @@ function leave(socket) {
                 }
             }
         }
-        socket.emit('join-res',{message:'failure'})
+        socket.emit('leave-res',{message:'failure'})
     })
 }
 
@@ -82,15 +82,17 @@ function create(socket) {
         const { hubName, hubCode, isPublic, hubTopic } = data
         const uid = socket.handshake.auth.userID
         if(hubName && (isPublic ? true: hubCode.length == 6) ){
-            const created = await createHub(uid,hubName,hubTopic,
+            createHub(uid,hubName,hubTopic,
                 isPublic,hubCode,[])
-            if(created){
                 const hub = await getHubDetailsByName(hubName)
                 await addUserToHub(hub.hubID,uid)
-                return socket.emit('leave-res',{message:'success'})
-            }
+                return socket.emit('create-res',{
+                    message:'success',
+                    hubID:hub.hubID,
+                    token:createAgoraToken(hub.hubID, uid)
+                })
         }
-        socket.emit('join-res',{message:'failure'})
+        socket.emit('create-res',{message:'failure'})
     })
 }
 
@@ -101,4 +103,11 @@ function publicHubs(socket) {
             hubs : await getPublicHubs()
         })
     })
+}
+
+module.exports = {
+    publicHubs,
+    join,
+    leave,
+    create
 }
