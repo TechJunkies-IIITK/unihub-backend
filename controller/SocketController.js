@@ -79,16 +79,17 @@ function leave(socket) {
 
 function create(socket) {
     socket.on('create',async(data)=>{
-        const { hubName, hubCode, isPublic, hubTopic } = data
+        const { hubName, isPublic, hubTopic } = data
         const uid = socket.handshake.auth.userID
-        if(hubName && (isPublic ? true: hubCode.length == 6) ){
+        if(hubName && (isPublic !== undefined && isPublic !==null) ){
             createHub(uid,hubName,hubTopic,
-                isPublic,hubCode,[])
+                isPublic,[])
                 const hub = await getHubDetailsByName(hubName)
                 await addUserToHub(hub.hubID,uid)
                 return socket.emit('create-res',{
                     message:'success',
                     hubID:hub.hubID,
+                    hubCode:hub.hubCode,
                     token:createAgoraToken(hub.hubID, uid)
                 })
         }
