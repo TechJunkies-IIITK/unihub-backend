@@ -27,15 +27,15 @@ const logIn = async(req,res)=>{
     }
     res.send({message : 'Invalid credentials'})
 }
-const signUp = (req,res)=>{
+const signUp = async (req,res)=>{
     // signup code goes here
     const { name, email, phone, password, profileLink } =req.body
     if(email && password && name && profileLink){
-        addUser(name,email,'',password,profileLink)
+        await addUser(name,email,'',password,profileLink)
         return res.send({message : 'success'})
     }
     if(phone && password && name && profileLink){
-        addUser(name,'',phone,password,profileLink)
+        await addUser(name,'',phone,password,profileLink)
         return res.send({message : 'success'})
     }
     res.send({message : 'Invalid credentials'})

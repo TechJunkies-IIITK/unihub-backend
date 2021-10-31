@@ -82,9 +82,8 @@ function create(socket) {
         const { hubName, isPublic, hubTopic } = data
         const uid = socket.handshake.auth.userID
         if(hubName && (isPublic !== undefined && isPublic !==null) ){
-            createHub(uid,hubName,hubTopic,
+            const hub = await createHub(uid,hubName,hubTopic,
                 isPublic,[])
-                const hub = await getHubDetailsByName(hubName)
                 await addUserToHub(hub.hubID,uid)
                 return socket.emit('create-res',{
                     message:'success',
