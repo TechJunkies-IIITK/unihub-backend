@@ -1,7 +1,7 @@
 const { PORT, DATABASE_URL } = require('./config/config')
 const express = require('express')
 const app = express()
-const { logIn, signUp } = require('./controller/AuthController')
+const { logIn, signUp, verify } = require('./controller/AuthController')
 const { verifyToken } = require('./controller/JwtController') 
 const server = require('http').createServer(app)
 const { Server } = require('socket.io')
@@ -42,5 +42,7 @@ app.use(express.json())
 app.post('/login',logIn)
 
 app.post('/signup',signUp)
+
+app.post('/verify',verify)
 
 server.listen(PORT,()=>console.log(`Server running at port ${PORT}`))

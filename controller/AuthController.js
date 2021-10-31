@@ -3,10 +3,11 @@ const {
     getUserDetailsByPhone,
     addUser 
 } = require('./DatabaseController')
-const {createToken} = require('./JwtController')
-const {hashSync,compareSync} = require('bcrypt')
+const { SECRET } = require('../config/config')
+const { createToken, verifyToken } = require('./JwtController')
+const { compareSync } = require('bcrypt')
 
-const logIn = async(req,res)=>{
+async function logIn(req, res) {
     // login code goes here
     const { email, phone, password } = req.body
     if(email && password){
@@ -27,7 +28,8 @@ const logIn = async(req,res)=>{
     }
     res.send({message : 'Invalid credentials'})
 }
-const signUp = async (req,res)=>{
+
+async function signUp (req,res) {
     // signup code goes here
     const { name, email, phone, password, profileLink } =req.body
     if(email && password && name && profileLink){
@@ -41,7 +43,18 @@ const signUp = async (req,res)=>{
     res.send({message : 'Invalid credentials'})
 }
 
+async function verify(req,res) {
+    const { token, userID } = req.body
+    if(token && userID){
+        if(verifyToken(token, userID)){
+            return res.send({message : 'success'})
+        }
+    }
+    res.send({message:  'failure'})
+}
+
 module.exports = {
     logIn,
-    signUp
+    signUp,
+    verify
 }
