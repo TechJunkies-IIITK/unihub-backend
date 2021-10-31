@@ -5,18 +5,16 @@ const { uid } = require('uid/secure')
 const getUid = require('get-uid')
 
 async function addUser(name,email,phone,password,profileLink){
-    let added
-    await UserSchema.create({
+    const user = new UserSchema({
         name,
         email,
         phone,
         password: hashSync(password, 12),
         profileLink,
         userID: getUid()
-    },(err,data)=>{
-        if(data)added=true
     })
-    return added===true
+    await user.save()
+    return user
 }
 
 async function getUserDetailsByEmail(email){
@@ -27,8 +25,8 @@ async function getUserDetailsByPhone(phone){
     return await UserSchema.findOne({phone})
 }
 
-function createHub(adminId,hubName,hubTopic,isPublic,users){
-    HubSchema.create({
+async function createHub(adminId,hubName,hubTopic,isPublic,users){
+    const hub = new HubSchema({
         adminId,
         hubName,
         hubID : uid(12),
@@ -36,8 +34,9 @@ function createHub(adminId,hubName,hubTopic,isPublic,users){
         hubCode : isPublic ? '' : uid(6),
         isPublic,
         users
-    },(err,data)=>{
     })
+    await hub.save()
+    return hub
 }
 
 async function addUserToHub(hubID,userID){
