@@ -27,7 +27,7 @@ async function getUserDetailsByPhone(phone){
     return await UserSchema.findOne({phone})
 }
 
-function createHub(adminId,hubName,hubTopic,isPublic,hubCode,users){
+function createHub(adminId,hubName,hubTopic,isPublic,users){
     HubSchema.create({
         adminId,
         hubName,
