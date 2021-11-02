@@ -43,7 +43,7 @@ async function signUp (req,res) {
     res.send({message : 'Invalid credentials'})
 }
 
-async function verify(req,res) {
+function verify(req,res) {
     const { token, userID } = req.body
     if(token && userID){
         if(verifyToken(token, userID)){
