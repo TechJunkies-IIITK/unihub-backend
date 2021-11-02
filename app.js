@@ -22,10 +22,12 @@ mongoose.connection.on('disconnected',()=>console.log('database disconnected'))
 io.use((socket,next)=>{
     const token = socket.handshake.auth.token;
     const uid = socket.handshake.auth.userID;
+    console.log('user request')
     if(verifyToken(token,uid)){
         next()
     }else{
         socket.disconnect()
+        console.log('disconnected')
     }
 })
 
