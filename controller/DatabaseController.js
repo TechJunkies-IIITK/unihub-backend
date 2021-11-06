@@ -81,8 +81,8 @@ async function getHubDetailsByCode(hubCode){
     return await HubSchema.findOne({hubCode})
 }
 
-async function getHubDetailsByName(hubName){
-    return await HubSchema.findOne({hubName})
+async function getHubDetailsByID(hubID){
+    return await HubSchema.findOne({hubID})
 }
 
 module.exports = {
@@ -93,6 +93,6 @@ module.exports = {
     addUserToHub,
     removeUserFromHub,
     getHubDetailsByCode,
-    getHubDetailsByName,
+    getHubDetailsByID,
     getPublicHubs
 }

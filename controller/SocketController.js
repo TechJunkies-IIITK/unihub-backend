@@ -1,5 +1,5 @@
 const { 
-    getHubDetailsByName,
+    getHubDetailsByID,
     getHubDetailsByCode,
     addUserToHub,
     removeUserFromHub,
@@ -10,14 +10,14 @@ const { createAgoraToken } = require('./JwtController')
 
 function join(socket) {
     socket.on('join',async(data)=>{
-        const { isPublic, hubName, hubCode} = data
+        const { isPublic, hubID, hubCode} = data
         const uid = Number(socket.handshake.headers.userid)
         if(isPublic){
-            if(hubName){
-                const hub = await getHubDetailsByName(hubName)
+            if(hubID){
+                const hub = await getHubDetailsByID(hubID)
                 if(hub){
                     await addUserToHub(hub.hubID,uid)
-                    socket.hubName = hubName
+                    socket.hubID = hub.hubID
                     const token = createAgoraToken(hub.hubID, uid)
                     socket.emit('join-res',{
                         message: 'success',
@@ -41,7 +41,7 @@ function join(socket) {
             if(hubCode ){
                 const hub = await getHubDetailsByCode(hubCode)
                 if(hub){
-                    socket.hubName = hubName
+                    socket.hubID = hub.hubID
                     await addUserToHub(hub.hubID,uid)
                     const token = createAgoraToken(hub.hubID, uid)
                     socket.emit('join-res',{
@@ -71,7 +71,7 @@ function leave(socket) {
         const { hubName } = data
         const uid = Number(socket.handshake.headers.userid)
         if(hubName){
-            const hub = await getHubDetailsByName(hubName)
+            const hub = await (hubName)
             if(hub){
                 const removed = await removeUserFromHub(hub.hubID,uid)
                 if(removed){
