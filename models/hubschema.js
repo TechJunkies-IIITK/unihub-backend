@@ -2,6 +2,7 @@ const {Schema , model} = require('mongoose')
 
 const HubSchema = new Schema({
     adminId : {type: Number, unique:true},
+    adminName : String,
     hubName : String,
     hubID : {type: String, unique:true},
     hubTopic : String,
