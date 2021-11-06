@@ -53,6 +53,14 @@ function verify(req,res) {
     res.send({message:  'failure'})
 }
 
+function generateOTP(req,res){
+    //todo
+}
+
+function verifyOTP(req,res){
+    //todo
+}
+
 module.exports = {
     logIn,
     signUp,
