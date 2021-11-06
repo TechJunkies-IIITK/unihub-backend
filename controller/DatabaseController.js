@@ -25,13 +25,14 @@ async function getUserDetailsByPhone(phone){
     return await UserSchema.findOne({phone})
 }
 
-async function getUserDetailsByPhone(userID){
+async function getUserDetailsByID(userID){
     return await UserSchema.findOne({userID})
 }
 
 async function createHub(adminId,hubName,hubTopic,isPublic,users){
     const hub = new HubSchema({
         adminId,
+        adminName : (await getUserDetailsByID(adminId)).name,
         hubName,
         hubID : uid(12),
         hubTopic,
@@ -89,6 +90,7 @@ module.exports = {
     addUser,
     getUserDetailsByEmail,
     getUserDetailsByPhone,
+    getUserDetailsByID,
     createHub,
     addUserToHub,
     removeUserFromHub,
