@@ -11,19 +11,22 @@ const { createAgoraToken } = require('./JwtController')
 function join(socket) {
     socket.on('join',async(data)=>{
         const { isPublic, hubName, hubCode} = data
-        const uid = socket.handshake.auth.userID
+        const uid = Number(socket.handshake.headers.userid)
         if(isPublic){
             if(hubName){
                 const hub = await getHubDetailsByName(hubName)
                 if(hub){
+                    await addUserToHub(hub.hubID,uid)
+                    socket.hubName = hubName
                     const token = createAgoraToken(hub.hubID, uid)
                     socket.emit('join-res',{
                         message: 'success',
                         token,
-                        hubName
+                        hubName: hub.hubName,
+                        hubID: hub.hubID,
+                        hubTopic: hub.hubTopic,
+                        users: hub.users,
                     })
-                    addUserToHub(hub.hubID,uid)
-                    socket.hubName = hubName
                 }else{
                     socket.emit('join-res',{
                         message : 'no hub with given name exists'
@@ -38,14 +41,17 @@ function join(socket) {
             if(hubCode ){
                 const hub = await getHubDetailsByCode(hubCode)
                 if(hub){
+                    socket.hubName = hubName
+                    await addUserToHub(hub.hubID,uid)
                     const token = createAgoraToken(hub.hubID, uid)
                     socket.emit('join-res',{
                         message: 'success',
                         token,
-                        hubName: hub.hubName
+                        hubName: hub.hubName,
+                        hubID: hub.hubID,
+                        hubTopic: hub.hubTopic,
+                        users: hub.users,
                     })
-                    socket.hubName = hubName
-                    addUserToHub(hub.hubID,uid)
                 }else{
                     socket.emit('join-res',{
                         message : 'No room with given code exists'
@@ -63,7 +69,7 @@ function join(socket) {
 function leave(socket) {
     socket.on('leave',async(data)=>{
         const { hubName } = data
-        const uid = socket.handshake.auth.userID
+        const uid = Number(socket.handshake.headers.userid)
         if(hubName){
             const hub = await getHubDetailsByName(hubName)
             if(hub){
@@ -80,15 +86,17 @@ function leave(socket) {
 function create(socket) {
     socket.on('create',async(data)=>{
         const { hubName, isPublic, hubTopic } = data
-        const uid = socket.handshake.auth.userID
+        const uid = Number(socket.handshake.headers.userid)
         if(hubName && (isPublic !== undefined && isPublic !==null) ){
             const hub = await createHub(uid,hubName,hubTopic,
                 isPublic,[])
                 await addUserToHub(hub.hubID,uid)
                 return socket.emit('create-res',{
                     message:'success',
-                    hubID:hub.hubID,
-                    hubCode:hub.hubCode,
+                    hubName: hub.hubName,
+                    hubID: hub.hubID,
+                    hubTopic: hub.hubTopic,
+                    users: hub.users,
                     token:createAgoraToken(hub.hubID, uid)
                 })
         }
