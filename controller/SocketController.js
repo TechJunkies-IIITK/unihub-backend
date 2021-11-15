@@ -80,7 +80,7 @@ function join(socket) {
 
 function leave(socket) {
     socket.on('leave',async(data)=>{
-        const hubID = connections[socket.id].hubID
+        const hubID = connections[socket.id] ? connections[socket.id].hubID : null
         const uid = Number(socket.handshake.headers.userid)
         if(hubID){
             const hub = await getHubDetailsByID(hubID)
