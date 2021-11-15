@@ -64,8 +64,8 @@ async function removeUserFromHub(hubID,userID){
     const hub = await HubSchema.findOne({hubID})
     if(hub!=null){
         const index = hub.users.findIndex((e)=>e.userID === userID)
-        hub.users.spice(index,1)
-        hub.save()
+        hub.users.splice(index,1)
+        await hub.save()
         return true
     } else{
         return false
@@ -86,6 +86,10 @@ async function getHubDetailsByID(hubID){
     return await HubSchema.findOne({hubID})
 }
 
+async function removeHubByID(hubID){
+    return await HubSchema.deleteOne({hubID})
+}
+
 module.exports = {
     addUser,
     getUserDetailsByEmail,
@@ -96,5 +100,6 @@ module.exports = {
     removeUserFromHub,
     getHubDetailsByCode,
     getHubDetailsByID,
-    getPublicHubs
+    getPublicHubs,
+    removeHubByID
 }

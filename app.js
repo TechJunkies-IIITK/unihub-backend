@@ -7,7 +7,12 @@ const server = require('http').createServer(app)
 const { Server } = require('socket.io')
 const io = new Server(server,{allowEIO3: true,cors:{origin:'*'}})
 const mongoose = require('mongoose')
-const { join, create, leave, publicHubs} = require('./controller/SocketController')
+const { join,
+    create,
+    leave, 
+    publicHubs,
+    connections
+} = require('./controller/SocketController')
 
 mongoose.connect(DATABASE_URL,{
     useNewUrlParser:true,
@@ -31,6 +36,7 @@ io.use((socket,next)=>{
 
 io.on('connection',(socket)=>{
     console.log('a user connected')
+    connections[socket.id] = {}
     create(socket)
     join(socket)
     leave(socket)
