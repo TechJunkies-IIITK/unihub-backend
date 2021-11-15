@@ -4,9 +4,11 @@ const {
     addUserToHub,
     removeUserFromHub,
     createHub,
-    getPublicHubs
+    getPublicHubs,
+    removeHubByID
 } = require('./DatabaseController')
 const { createAgoraToken } = require('./JwtController')
+const connections = {}
 
 function join(socket) {
     socket.on('join',async(data)=>{
@@ -17,14 +19,19 @@ function join(socket) {
                 const hub = await getHubDetailsByID(hubID)
                 if(hub){
                     await addUserToHub(hub.hubID,uid)
-                    socket.hubID = hub.hubID
+                    connections[socket.id].hubID = hub.hubID
                     const token = createAgoraToken(hub.hubID, uid)
+                    socket.join([hub.hubID])
                     socket.emit('join-res',{
                         message: 'success',
                         token,
                         hubName: hub.hubName,
                         hubID: hub.hubID,
                         hubTopic: hub.hubTopic,
+                        users: hub.users,
+                    })
+                    socket.broadcast.to(hub.hubID).emit('update',{
+                        message: 'success',
                         users: hub.users,
                     })
                 }else{
@@ -41,15 +48,20 @@ function join(socket) {
             if(hubCode ){
                 const hub = await getHubDetailsByCode(hubCode)
                 if(hub){
-                    socket.hubID = hub.hubID
+                    connections[socket.id].hubID = hub.hubID
                     await addUserToHub(hub.hubID,uid)
                     const token = createAgoraToken(hub.hubID, uid)
+                    socket.join([hub.hubID])
                     socket.emit('join-res',{
                         message: 'success',
                         token,
                         hubName: hub.hubName,
                         hubID: hub.hubID,
                         hubTopic: hub.hubTopic,
+                        users: hub.users,
+                    })
+                    socket.broadcast.to(hub.hubID).emit('update',{
+                        message: 'success',
                         users: hub.users,
                     })
                 }else{
@@ -68,15 +80,24 @@ function join(socket) {
 
 function leave(socket) {
     socket.on('leave',async(data)=>{
-        const { hubName } = data
+        const hubID = connections[socket.id].hubID
         const uid = Number(socket.handshake.headers.userid)
-        if(hubName){
-            const hub = await (hubName)
+        if(hubID){
+            const hub = await getHubDetailsByID(hubID)
             if(hub){
+                socket.leave(hubID)
                 const removed = await removeUserFromHub(hub.hubID,uid)
-                if(removed){
-                    return socket.emit('leave-res',{message:'success'})
+                if(hub.users.length <= 1){
+                    removeHubByID(hub.hubID)
                 }
+                delete connections[socket.id]
+                socket.emit('leave-res',{message:'success'})
+                socket.broadcast.to(hub.hubID).emit('update',{
+                    message: 'success',
+                    users: hub.users || [],
+                })
+            }else{
+                socket.emit('leave-res',{message:'No such HUB'})
             }
         }
         socket.emit('leave-res',{message:'failure'})
@@ -90,7 +111,10 @@ function create(socket) {
         if(hubName && (isPublic !== undefined && isPublic !==null) ){
             const hub = await createHub(uid,hubName,hubTopic,
                 isPublic,[])
+                connections[socket.id].hubID = hub.hubID
+                console.log(connections)
                 await addUserToHub(hub.hubID,uid)
+                socket.join([hub.hubID])
                 return socket.emit('create-res',{
                     message:'success',
                     hubName: hub.hubName,
@@ -105,6 +129,7 @@ function create(socket) {
 }
 
 function publicHubs(socket) {
+    console.log(connections[socket.id].hubID)
     socket.on('public',async(data)=>{
         socket.emit('public-res',{
             message: 'success',
@@ -117,5 +142,6 @@ module.exports = {
     publicHubs,
     join,
     leave,
-    create
+    create,
+    connections
 }
