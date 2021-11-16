@@ -41,6 +41,7 @@ io.on('connection',(socket)=>{
     join(socket)
     leave(socket)
     publicHubs(socket)
+    socket.on('disconnect',()=>socket.emit('leave'))
 });
 
 app.use(express.json())

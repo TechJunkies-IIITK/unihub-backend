@@ -28,6 +28,7 @@ function join(socket) {
                         hubName: hub.hubName,
                         hubID: hub.hubID,
                         hubTopic: hub.hubTopic,
+                        hubCode: hub.hubCode,
                         users: hub.users,
                     })
                     socket.broadcast.to(hub.hubID).emit('update',{
@@ -58,6 +59,7 @@ function join(socket) {
                         hubName: hub.hubName,
                         hubID: hub.hubID,
                         hubTopic: hub.hubTopic,
+                        hubCode: hub.hubCode,
                         users: hub.users,
                     })
                     socket.broadcast.to(hub.hubID).emit('update',{
@@ -121,6 +123,7 @@ function create(socket) {
                     hubID: hub.hubID,
                     hubTopic: hub.hubTopic,
                     users: hub.users,
+                    hubCode: hub.hubCode,
                     token:createAgoraToken(hub.hubID, uid)
                 })
         }
