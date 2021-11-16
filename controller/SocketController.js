@@ -19,6 +19,7 @@ function join(socket) {
                 const hub = await getHubDetailsByID(hubID)
                 if(hub){
                     await addUserToHub(hub.hubID,uid)
+                    connections[socket.id] = {}
                     connections[socket.id].hubID = hub.hubID
                     const token = createAgoraToken(hub.hubID, uid)
                     socket.join([hub.hubID])
@@ -49,6 +50,7 @@ function join(socket) {
             if(hubCode ){
                 const hub = await getHubDetailsByCode(hubCode)
                 if(hub){
+                    connections[socket.id] = {}
                     connections[socket.id].hubID = hub.hubID
                     await addUserToHub(hub.hubID,uid)
                     const token = createAgoraToken(hub.hubID, uid)
@@ -115,6 +117,7 @@ function create(socket) {
         if(hubName && (isPublic !== undefined && isPublic !==null) ){
             const hub = await createHub(uid,hubName,hubTopic,
                 isPublic,[])
+                connections[socket.id] = {}
                 connections[socket.id].hubID = hub.hubID
                 await addUserToHub(hub.hubID,uid)
                 socket.join([hub.hubID])
