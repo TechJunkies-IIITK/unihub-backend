@@ -35,7 +35,7 @@ function join(socket) {
                     })
                     socket.broadcast.to(hub.hubID).emit('update',{
                         message: 'success',
-                        users: hub.users,
+                        users: updatedHub.users,
                     })
                 }else{
                     socket.emit('join-res',{
@@ -68,7 +68,7 @@ function join(socket) {
                     })
                     socket.broadcast.to(hub.hubID).emit('update',{
                         message: 'success',
-                        users: hub.users,
+                        users: updatedHub.users,
                     })
                 }else{
                     socket.emit('join-res',{
@@ -124,12 +124,13 @@ function create(socket) {
                 connections[socket.id].hubID = hub.hubID
                 await addUserToHub(hub.hubID,uid)
                 socket.join([hub.hubID])
+                const updatedHub = await getHubDetailsByID(hub.hubID)
                 return socket.emit('create-res',{
                     message:'success',
                     hubName: hub.hubName,
                     hubID: hub.hubID,
                     hubTopic: hub.hubTopic,
-                    users: hub.users,
+                    users: updatedHub.users,
                     hubCode: hub.hubCode,
                     token:createAgoraToken(hub.hubID, uid)
                 })
