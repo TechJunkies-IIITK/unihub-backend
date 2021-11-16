@@ -92,7 +92,9 @@ function leave(socket) {
                 if(hub.users.length <= 1){
                     removeHubByID(hub.hubID)
                 }
-                delete connections[socket.id]
+                try{
+                    delete connections[socket.id]
+                }catch(err){};
                 socket.emit('leave-res',{message:'success'})
                 socket.broadcast.to(hub.hubID).emit('update',{
                     message: 'success',
