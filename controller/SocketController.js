@@ -23,6 +23,7 @@ function join(socket) {
                     connections[socket.id].hubID = hub.hubID
                     const token = createAgoraToken(hub.hubID, uid)
                     socket.join([hub.hubID])
+                    const updatedHub = await getHubDetailsByID(hubID)
                     socket.emit('join-res',{
                         message: 'success',
                         token,
@@ -30,7 +31,7 @@ function join(socket) {
                         hubID: hub.hubID,
                         hubTopic: hub.hubTopic,
                         hubCode: hub.hubCode,
-                        users: hub.users,
+                        users: updatedHub.users,
                     })
                     socket.broadcast.to(hub.hubID).emit('update',{
                         message: 'success',
@@ -55,6 +56,7 @@ function join(socket) {
                     await addUserToHub(hub.hubID,uid)
                     const token = createAgoraToken(hub.hubID, uid)
                     socket.join([hub.hubID])
+                    const updatedHub = await getHubDetailsByCode(hubCode)
                     socket.emit('join-res',{
                         message: 'success',
                         token,
@@ -62,7 +64,7 @@ function join(socket) {
                         hubID: hub.hubID,
                         hubTopic: hub.hubTopic,
                         hubCode: hub.hubCode,
-                        users: hub.users,
+                        users: updatedHub.users,
                     })
                     socket.broadcast.to(hub.hubID).emit('update',{
                         message: 'success',
@@ -97,10 +99,11 @@ function leave(socket) {
                 try{
                     delete connections[socket.id]
                 }catch(err){};
+                const updatedHub = await getHubDetailsByID(hubID)
                 socket.emit('leave-res',{message:'success'})
                 socket.broadcast.to(hub.hubID).emit('update',{
                     message: 'success',
-                    users: hub.users || [],
+                    users: updatedHub.users || [],
                 })
             }else{
                 socket.emit('leave-res',{message:'No such HUB'})
