@@ -114,7 +114,6 @@ function create(socket) {
             const hub = await createHub(uid,hubName,hubTopic,
                 isPublic,[])
                 connections[socket.id].hubID = hub.hubID
-                console.log(connections)
                 await addUserToHub(hub.hubID,uid)
                 socket.join([hub.hubID])
                 return socket.emit('create-res',{
@@ -132,7 +131,6 @@ function create(socket) {
 }
 
 function publicHubs(socket) {
-    console.log(connections[socket.id].hubID)
     socket.on('public',async(data)=>{
         socket.emit('public-res',{
             message: 'success',
