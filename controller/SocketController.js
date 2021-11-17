@@ -22,7 +22,7 @@ function join(socket) {
                     connections[socket.id] = {}
                     connections[socket.id].hubID = hub.hubID
                     const token = createAgoraToken(hub.hubID, uid)
-                    socket.join([hub.hubID])
+                    await socket.join([hub.hubID])
                     const updatedHub = await getHubDetailsByID(hubID)
                     socket.emit('join-res',{
                         message: 'success',
@@ -55,7 +55,7 @@ function join(socket) {
                     connections[socket.id].hubID = hub.hubID
                     await addUserToHub(hub.hubID,uid)
                     const token = createAgoraToken(hub.hubID, uid)
-                    socket.join([hub.hubID])
+                    await socket.join([hub.hubID])
                     const updatedHub = await getHubDetailsByCode(hubCode)
                     socket.emit('join-res',{
                         message: 'success',
@@ -123,7 +123,7 @@ function create(socket) {
                 connections[socket.id] = {}
                 connections[socket.id].hubID = hub.hubID
                 await addUserToHub(hub.hubID,uid)
-                socket.join([hub.hubID])
+                await socket.join([hub.hubID])
                 const updatedHub = await getHubDetailsByID(hub.hubID)
                 return socket.emit('create-res',{
                     message:'success',
