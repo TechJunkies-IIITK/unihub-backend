@@ -18,12 +18,11 @@ function join(socket) {
             if(hubID){
                 const hub = await getHubDetailsByID(hubID)
                 if(hub){
-                    await addUserToHub(hub.hubID,uid)
+                    const updatedHub = await addUserToHub(hub.hubID,uid)
                     connections[socket.id] = {}
                     connections[socket.id].hubID = hub.hubID
                     const token = createAgoraToken(hub.hubID, uid)
                     await socket.join([hub.hubID])
-                    const updatedHub = await getHubDetailsByID(hubID)
                     socket.emit('join-res',{
                         message: 'success',
                         token,
@@ -53,10 +52,9 @@ function join(socket) {
                 if(hub){
                     connections[socket.id] = {}
                     connections[socket.id].hubID = hub.hubID
-                    await addUserToHub(hub.hubID,uid)
+                    const updatedHub = await addUserToHub(hub.hubID,uid)
                     const token = createAgoraToken(hub.hubID, uid)
                     await socket.join([hub.hubID])
-                    const updatedHub = await getHubDetailsByCode(hubCode)
                     socket.emit('join-res',{
                         message: 'success',
                         token,
@@ -92,14 +90,13 @@ function leave(socket) {
             const hub = await getHubDetailsByID(hubID)
             if(hub){
                 socket.leave(hubID)
-                const removed = await removeUserFromHub(hub.hubID,uid)
+                const updatedHub = await removeUserFromHub(hub.hubID,uid)
                 if(hub.users.length <= 1){
                     removeHubByID(hub.hubID)
                 }
                 try{
                     delete connections[socket.id]
                 }catch(err){};
-                const updatedHub = await getHubDetailsByID(hubID)
                 socket.emit('leave-res',{message:'success'})
                 socket.broadcast.to(hub.hubID).emit('update',{
                     message: 'success',
@@ -122,9 +119,8 @@ function create(socket) {
                 isPublic,[])
                 connections[socket.id] = {}
                 connections[socket.id].hubID = hub.hubID
-                await addUserToHub(hub.hubID,uid)
+                const updatedHub = await addUserToHub(hub.hubID,uid)
                 await socket.join([hub.hubID])
-                const updatedHub = await getHubDetailsByID(hub.hubID)
                 return socket.emit('create-res',{
                     message:'success',
                     hubName: hub.hubName,
