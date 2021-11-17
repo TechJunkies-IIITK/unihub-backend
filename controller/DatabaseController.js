@@ -53,10 +53,10 @@ async function addUserToHub(hubID,userID){
             userID,
             profileLink: user.profileLink
         })
-        hub.save()
-        return true
+        await hub.save()
+        return hub
     } else{
-        return false
+        return hub
     }
 }
 
@@ -66,9 +66,9 @@ async function removeUserFromHub(hubID,userID){
         const index = hub.users.findIndex((e)=>e.userID === userID)
         hub.users.splice(index,1)
         await hub.save()
-        return true
+        return hub
     } else{
-        return false
+        return hub
     }
 }
 
