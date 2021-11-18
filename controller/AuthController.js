@@ -19,7 +19,8 @@ async function logIn(req, res) {
                     userID : user.userID,
                     token: createToken(user.userID),
                     phoneOrEmail: email,
-                    name: user.name
+                    name: user.name,
+                    profileLink: user.profileLink
                 })
             }
         }
@@ -33,7 +34,8 @@ async function logIn(req, res) {
                     userID : user.userID,
                     token: createToken(user.userID),
                     phoneOrEmail: phone,
-                    name: user.name
+                    name: user.name,
+                    profileLink: user.profileLink
                 })
             }
         }
