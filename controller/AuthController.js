@@ -14,7 +14,14 @@ async function logIn(req, res) {
         const user = await getUserDetailsByEmail(email)
         if(user){
             if(compareSync(password, user.password)){
-                return res.send({message: 'success',userID : user.userID, token: createToken(user.userID)})
+                return res.send({
+                    message: 'success',
+                    userID : user.userID,
+                    token: createToken(user.userID),
+                    phoneOrEmail: email,
+                    name: user.name,
+                    profileLink: user.profileLink
+                })
             }
         }
     }
@@ -22,7 +29,14 @@ async function logIn(req, res) {
         const user = await getUserDetailsByPhone(phone)
         if(user){
             if(compareSync(password, user.password)){
-                return res.send({message: 'success',userID : user.userID, token: createToken(user.userID)})
+                return res.send({
+                    message: 'success',
+                    userID : user.userID,
+                    token: createToken(user.userID),
+                    phoneOrEmail: phone,
+                    name: user.name,
+                    profileLink: user.profileLink
+                })
             }
         }
     }
@@ -33,10 +47,16 @@ async function signUp (req,res) {
     // signup code goes here
     const { name, email, phone, password, profileLink } =req.body
     if(email && password && name && profileLink){
+        if(await getUserDetailsByEmail(email)){
+            return res.send({message: 'Email already taken'})
+        }
         await addUser(name,email,'',password,profileLink)
         return res.send({message : 'success'})
     }
     if(phone && password && name && profileLink){
+        if(await getUserDetailsByPhone(phone)){
+            return res.send({message: 'Phone already taken'})
+        }
         await addUser(name,'',phone,password,profileLink)
         return res.send({message : 'success'})
     }
