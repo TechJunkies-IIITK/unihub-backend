@@ -1,32 +1,38 @@
-const jwt = require('jsonwebtoken')
-const { SECRET, APP_ID, APP_CERTIFICATE } = require('../config/config')
-const { RtcRole, RtcTokenBuilder } = require('agora-access-token')
-const expirationTimeInSeconds = 3600 * 24
-const currentTimestamp = Math.floor(Date.now() / 1000)
-const privilegeExpiredTs = currentTimestamp + expirationTimeInSeconds
-const role = RtcRole.PUBLISHER
+const jwt = require('jsonwebtoken');
+const { SECRET, APP_ID, APP_CERTIFICATE } = require('../config/config');
+const { RtcRole, RtcTokenBuilder } = require('agora-access-token');
+const expirationTimeInSeconds = 3600 * 24;
+const currentTimestamp = Math.floor(Date.now() / 1000);
+const privilegeExpiredTs = currentTimestamp + expirationTimeInSeconds;
+const role = RtcRole.PUBLISHER;
 
-function createToken(userID){
-    return jwt.sign({userID},SECRET,{expiresIn: '7d'})
+function createToken(userID) {
+  return jwt.sign({ userID }, SECRET, { expiresIn: '7d' });
 }
 
-function verifyToken(token,userID){
-    let verified=false
-    jwt.verify(token, SECRET,(err,data)=>{
-        if(data){
-            verified = userID === data.userID
-        }
-    })
-    return verified
+function verifyToken(token, userID) {
+  let verified = false;
+  jwt.verify(token, SECRET, (err, data) => {
+    if (data) {
+      verified = userID === data.userID;
+    }
+  });
+  return verified;
 }
 
-function createAgoraToken(hubID,userID) {
-    return RtcTokenBuilder.buildTokenWithUid(APP_ID,APP_CERTIFICATE,hubID,
-        userID,role,privilegeExpiredTs)
+function createAgoraToken(hubID, userID) {
+  return RtcTokenBuilder.buildTokenWithUid(
+    APP_ID,
+    APP_CERTIFICATE,
+    hubID,
+    userID,
+    role,
+    privilegeExpiredTs
+  );
 }
 
 module.exports = {
-    createToken,
-    verifyToken,
-    createAgoraToken
-}
+  createToken,
+  verifyToken,
+  createAgoraToken
+};

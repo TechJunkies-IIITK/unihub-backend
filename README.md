@@ -1,3 +1,3 @@
 # Unihub Backend code
 
-Use yarn don't use npm:)
+Server side scripting for Unihub Mobile application.
